@@ -1,13 +1,9 @@
 //THIS CODE SAYSS REVERSE MY NAMEEEE
-
+const { reverseString } = require('code-class-gerald');
 const express = require('express');
 const app = express();
 app.use(express.json()); 
 let users = []; 
-
-function reverseString(str) {
-    return str.split('').reverse().join('');
-}
 
 app.get('/users', (req, res) => {
     res.send(users);
