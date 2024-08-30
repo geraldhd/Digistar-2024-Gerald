@@ -23,12 +23,32 @@ app.get('/users/:id', (req, res) => {
     }
 });
 
+app.get('/search', (req, res) => {
+    const { name, email } = req.query;
+
+    let result = users;
+
+    if (name) {
+        result = result.filter(user => user.name.includes(reverseString(name)));
+    }
+
+    if (email) {
+        result = result.filter(user => user.email.includes(email));
+    }
+
+    if (result.length > 0) {
+        res.send(result);
+    } else {
+        res.status(404).send({ error: 'No users found' });
+    }
+});
+
 app.post('/users', (req, res) => {
     const { name, email } = req.body;
     if (name && email) {
         const newUser = {
-            id: users.length + 1, // Menggunakan ID sederhana berdasarkan panjang array
-            name: reverseString(name), // Nama dibalik
+            id: users.length + 1, 
+            name: reverseString(name), 
             email
         };
         users.push(newUser);
@@ -44,7 +64,7 @@ app.put('/users/:id', (req, res) => {
     const user = users.find(u => u.id === userId);
     
     if (user) {
-        if (name) user.name = reverseString(name); // Nama dibalik saat di-update
+        if (name) user.name = reverseString(name); 
         if (email) user.email = email;
         res.send(user);
     } else {
