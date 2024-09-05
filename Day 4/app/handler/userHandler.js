@@ -1,4 +1,3 @@
-// app/handler/userHandler.js
 const userUsecase = require('../usecase/userUsecase');
 
 const createUser = async (req, res) => {
@@ -21,7 +20,7 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        const user = await userUsecase.getUserById(parseInt(req.params.id));
+        const user = await userUsecase.getUserById(req.params.id); // Use req.params.id directly
         if (user) {
             res.send(user);
         } else {
@@ -34,7 +33,7 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const updatedUser = await userUsecase.updateUser(parseInt(req.params.id), req.body);
+        const updatedUser = await userUsecase.updateUser(req.params.id, req.body); // Use req.params.id directly
         if (updatedUser) {
             res.send(updatedUser);
         } else {
@@ -47,7 +46,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const success = await userUsecase.deleteUser(parseInt(req.params.id));
+        const success = await userUsecase.deleteUser(req.params.id); // Use req.params.id directly
         if (success) {
             res.send({ message: 'User deleted successfully' });
         } else {
@@ -62,12 +61,14 @@ const searchUsers = async (req, res) => {
     try {
         const { name, email } = req.query;
         const users = await userUsecase.searchUsers(name, email);
+        
         if (users.length > 0) {
-            res.send(users);
+            res.status(200).send(users);
         } else {
-            res.status(404).send({ error: 'No users found' });
+            res.status(200).send({ message: 'No users found' });
         }
     } catch (err) {
+        console.error('Error in searchUsers:', err); // Log error ke konsol untuk debugging
         res.status(500).send({ error: 'Internal Server Error' });
     }
 };

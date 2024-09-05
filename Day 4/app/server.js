@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // Load environment variables
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/yourdb';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/digistarDB';
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })

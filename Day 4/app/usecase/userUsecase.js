@@ -1,4 +1,3 @@
-// app/usecase/userUsecase.js
 const UserRepository = require('../repository/userRepository');
 const reverseString = require('code-class-gerald').reverseString;
 const Joi = require('joi');
@@ -29,22 +28,34 @@ const createUser = async (userData) => {
     const reverseName = reverseString(name);
 
     const newUser = {
-        id: userRepository.users.length + 1, // Generate user ID
+        // Assuming you're using MongoDB, _id will be generated automatically
         name,
         reverseName,
         email,
         password
     };
 
-    return await userRepository.addUser(newUser);
+    try {
+        return await userRepository.addUser(newUser);
+    } catch (err) {
+        throw new Error('Error creating user: ' + err.message);
+    }
 };
 
 const getAllUsers = async () => {
-    return await userRepository.getAllUsers();
+    try {
+        return await userRepository.getAllUsers();
+    } catch (err) {
+        throw new Error('Error retrieving users: ' + err.message);
+    }
 };
 
 const getUserById = async (id) => {
-    return await userRepository.getUserById(id);
+    try {
+        return await userRepository.getUserById(id);
+    } catch (err) {
+        throw new Error('Error retrieving user: ' + err.message);
+    }
 };
 
 const updateUser = async (id, updatedData) => {
@@ -58,15 +69,27 @@ const updateUser = async (id, updatedData) => {
         updatedData.reverseName = reverseString(updatedData.name);
     }
 
-    return await userRepository.updateUser(id, updatedData);
+    try {
+        return await userRepository.updateUser(id, updatedData);
+    } catch (err) {
+        throw new Error('Error updating user: ' + err.message);
+    }
 };
 
 const deleteUser = async (id) => {
-    return await userRepository.deleteUser(id);
+    try {
+        return await userRepository.deleteUser(id);
+    } catch (err) {
+        throw new Error('Error deleting user: ' + err.message);
+    }
 };
 
 const searchUsers = async (name, email) => {
-    return await userRepository.searchUsers(name, email);
+    try {
+        return await userRepository.searchUsers(name, email);
+    } catch (err) {
+        throw new Error('Error searching users: ' + err.message);
+    }
 };
 
 module.exports = {
