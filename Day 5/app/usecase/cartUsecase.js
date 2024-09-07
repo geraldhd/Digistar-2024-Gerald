@@ -1,61 +1,35 @@
-// app/usecase/cartUsecase.js
 const CartRepository = require('../repository/cartRepository');
-const OrderRepository = require('../repository/orderRepository'); // Import OrderRepository
+const cartSchema = require('../usecase/validation/cartValidation');
 
-const cartRepository = new CartRepository();
-//const orderRepository = new OrderRepository(); // Instantiate OrderRepository
+class CartUsecase {
+    async createCart(cartData) {
+        // Validasi data menggunakan schema Joi
+        const { error } = cartSchema.validate(cartData);
+        if (error) {
+            throw new Error(error.details[0].message);
+        }
+    
+        try {
+            return await CartRepository.createCart(cartData);
+        } catch (error) {
+            console.log("usecase error:", error);
+            throw new Error('Failed to create cart: ' + error.message);
+        }
+    };
 
-const createCart = async (userId, items) => {
-    try {
-        return await cartRepository.createCart({ userId, items });
-    } catch (err) {
-        throw new Error('Error creating cart: ' + err.message);
+
+    async getCartByUserId(userId) {
+        return await CartRepository.getCartByUserId(userId);
     }
-};
 
-const getCartByUserId = async (userId) => {
-    try {
-        return await cartRepository.getCartByUserId(userId);
-    } catch (err) {
-        throw new Error('Error retrieving cart: ' + err.message);
+    async updateCart(userId, updateData) {
+        // Add validation if needed
+        return await CartRepository.updateCart(userId, updateData);
     }
-};
 
-const updateCart = async (userId, items) => {
-    try {
-        return await cartRepository.updateCart(userId, items);
-    } catch (err) {
-        throw new Error('Error updating cart: ' + err.message);
+    async deleteCart(userId) {
+        return await CartRepository.deleteCart(userId);
     }
-};
+}
 
-const clearCart = async (userId) => {
-    try {
-        return await cartRepository.clearCart(userId);
-    } catch (err) {
-        throw new Error('Error clearing cart: ' + err.message);
-    }
-};
-
-// New method to convert cart to order
-const checkoutCart = async (userId) => {
-    try {
-        const cart = await cartRepository.getCartByUserId(userId);
-        if (!cart) throw new Error('Cart not found');
-
-        await cart.convertToOrder(); // Convert cart to orders
-        await cartRepository.clearCart(userId); // Clear cart after checkout
-
-        return { message: 'Cart checked out successfully' };
-    } catch (err) {
-        throw new Error('Error checking out cart: ' + err.message);
-    }
-};
-
-module.exports = {
-    createCart,
-    getCartByUserId,
-    updateCart,
-    clearCart,
-    checkoutCart
-};
+module.exports = new CartUsecase();

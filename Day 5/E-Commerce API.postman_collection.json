@@ -1,9 +1,10 @@
 {
 	"info": {
+		"_postman_id": "df97d096-b245-4d9b-914f-773320ca7a56",
 		"name": "E-Commerce API",
-		"_postman_id": "example-id",
 		"description": "Postman collection for testing E-Commerce API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34286527"
 	},
 	"item": [
 		{
@@ -244,6 +245,32 @@
 							],
 							"port": "3000",
 							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmRiYzBlNGJkNjg5NmIyY2ZjY2U1ZWQiLCJpYXQiOjE3MjU2ODY1OTQsImV4cCI6MTcyNTY5MDE5NH0.2zTkh0U8Tc1W-XoPp6Y-3R1fJ8KwfLxtF-yYUrD_6wU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
 								"orders"
 							]
 						}

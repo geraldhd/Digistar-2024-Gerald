@@ -1,24 +1,23 @@
-// app/server.js
 const express = require('express');
 const mongoose = require('mongoose');
-const userRoutes = require('./router/userRoutes'); // Sesuaikan path ini
-const orderRoutes = require('./router/orderRoutes');
-const cartRoutes = require('./router/cartRoutes');
-const app = express();
+const userRouter = require('./router/userRouter');
+const productRouter = require('./router/productRouter');
+const cartRouter = require('./router/cartRouter');
+const orderRouter = require('./router/orderRouter');
+const authMiddleware = require('./middleware/authMiddleware');
 
-// Middleware
+const app = express();
 app.use(express.json());
 
-// Load environment variables from .env (handled in index.js)
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/digistarDB';
+// Koneksi ke MongoDB
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB Connected'))
+    .catch((err) => console.error(err));
 
-// Connect to MongoDB
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB...', err));
 
-// Routes
-app.use('/api/users', userRoutes); // Apply authMiddleware to routes
-app.use('/api/orders', orderRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/users', userRouter);
+app.use('/api/products', productRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/orders', orderRouter);
+
 module.exports = app;

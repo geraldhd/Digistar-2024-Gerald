@@ -1,30 +1,43 @@
 const Order = require('../model/orderModel');
 
-const createOrder = async (orderData) => {
-    const order = new Order(orderData);
-    return await order.save();
-};
+class OrderRepository {
+    async createOrder(orderData) {
+        try {
+            const order = new Order(orderData);
+            return await order.save();
+        } catch (error) {
+            console.error('Error saving order:', error.message); // Log error untuk debugging
+            throw new Error('Failed to save order');
+        }
+    }
 
-const getAllOrders = async () => {
-    return await Order.find().populate('createdBy updatedBy');
-};
+    async clearCart(userId) {
+        try {
+            const cart = await Cart.findOne({ userId });
+            if (cart) {
+                cart.items = [];
+                await cart.save();
+            }
+        } catch (error) {
+            throw new Error('Failed to clear cart');
+        }
+    }
 
-const getOrderById = async (orderId) => {
-    return await Order.findById(orderId).populate('createdBy updatedBy');
-};
+    async getOrderById(orderId) {
+        return await Order.findById(orderId).populate('items.productId');
+    }
 
-const updateOrder = async (orderId, updateData) => {
-    return await Order.findByIdAndUpdate(orderId, updateData, { new: true }).populate('createdBy updatedBy');
-};
+    async getAllOrders() {
+        return await Order.find().populate('items.productId');
+    }
 
-const deleteOrder = async (orderId) => {
-    return await Order.findByIdAndDelete(orderId);
-};
+    async updateOrder(orderId, updateData) {
+        return await Order.findByIdAndUpdate(orderId, updateData, { new: true });
+    }
 
-module.exports = {
-    createOrder,
-    getAllOrders,
-    getOrderById,
-    updateOrder,
-    deleteOrder
-};
+    async deleteOrder(orderId) {
+        return await Order.findByIdAndDelete(orderId);
+    }
+}
+
+module.exports = new OrderRepository();

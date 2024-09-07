@@ -1,86 +1,64 @@
-// app/handler/userHandler.js
-const userUsecase = require('../usecase/userUsecase');
+const UserUsecase = require('../usecase/userUsecase');
 
-const createUser = async (req, res) => {
-    try {
-        const newUser = await userUsecase.createUser(req.body);
-        res.status(201).send(newUser);
-    } catch (err) {
-        res.status(400).send({ error: err.message });
-    }
-};
-
-const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const token = await userUsecase.loginUser(email, password);
-        res.send({ token });
-    } catch (err) {
-        res.status(400).send({ error: err.message });
-    }
-};
-
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await userUsecase.getAllUsers();
-        res.send(users);
-    } catch (err) {
-        res.status(500).send({ error: 'Internal Server Error' });
-    }
-};
-
-const getUserById = async (req, res) => {
-    try {
-        const user = await userUsecase.getUserById(req.params.id);
-        if (!user) {
-            return res.status(404).send({ error: 'User not found' });
+class UserHandler {
+    async register(req, res) {
+        try {
+            const user = await UserUsecase.register(req.body);
+            res.status(201).json(user);
+        } catch (err) {
+            res.status(400).json({ message: err.message });
         }
-        res.send(user);
-    } catch (err) {
-        res.status(500).send({ error: 'Internal Server Error' });
     }
-};
 
-const updateUser = async (req, res) => {
-    try {
-        const updatedUser = await userUsecase.updateUser(req.params.id, req.body);
-        if (!updatedUser) {
-            return res.status(404).send({ error: 'User not found' });
+    async login(req, res) {
+        try {
+            const { email, password } = req.body;
+            const result = await UserUsecase.login(email, password);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(401).json({ message: err.message });
         }
-        res.send(updatedUser);
-    } catch (err) {
-        res.status(400).send({ error: err.message });
     }
-};
 
-const deleteUser = async (req, res) => {
-    try {
-        const success = await userUsecase.deleteUser(req.params.id);
-        if (!success) {
-            return res.status(404).send({ error: 'User not found' });
+    async getUserById(req, res) {
+        try {
+            const user = await UserUsecase.getUserById(req.params.id);
+            if (user) {
+                res.status(200).json(user);
+            } else {
+                res.status(404).json({ message: 'User not found' });
+            }
+        } catch (err) {
+            res.status(400).json({ message: err.message });
         }
-        res.send({ message: 'User deleted successfully' });
-    } catch (err) {
-        res.status(500).send({ error: 'Internal Server Error' });
     }
-};
 
-const searchUsers = async (req, res) => {
-    try {
-        const { name, email } = req.query;
-        const users = await userUsecase.searchUsers(name, email);
-        res.send(users);
-    } catch (err) {
-        res.status(500).send({ error: 'Internal Server Error' });
+    async getAllUsers(req, res) {
+        try {
+            const users = await UserUsecase.getAllUsers();
+            res.status(200).json(users);
+        } catch (err) {
+            res.status(400).json({ message: err.message });
+        }
     }
-};
 
-module.exports = {
-    createUser,
-    loginUser,
-    getAllUsers,
-    getUserById,
-    updateUser,
-    deleteUser,
-    searchUsers
-};
+    async updateUser(req, res) {
+        try {
+            const user = await UserUsecase.updateUser(req.params.id, req.body);
+            res.status(200).json(user);
+        } catch (err) {
+            res.status(400).json({ message: err.message });
+        }
+    }
+
+    async deleteUser(req, res) {
+        try {
+            await UserUsecase.deleteUser(req.params.id);
+            res.status(204).end();
+        } catch (err) {
+            res.status(400).json({ message: err.message });
+        }
+    }
+}
+
+module.exports = new UserHandler();
